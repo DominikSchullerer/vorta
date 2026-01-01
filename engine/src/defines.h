@@ -3,9 +3,12 @@
 
     #include <stdint.h>
 
+    typedef float float32_t;
+    typedef double float64_t;
+
     // Boolean types
-    typedef uint32_t b32_t;
-    typedef uint8_t b8_t;
+    typedef uint32_t bool32_t;
+    typedef uint8_t bool8_t;
 
     #define TRUE 1
     #define FALSE 0

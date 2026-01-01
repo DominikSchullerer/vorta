@@ -25,43 +25,43 @@
         LOG_LEVEL_TRACE
     } log_level_t;
 
-    b8_t initialize_logging();
+    bool8_t initialize_logging();
     void shutdown_logging();
 
     V_API void log_output(log_level_t level, const char* message, ...);
 
 
-    #define V_FATAL(msg, ...) log_output(LOG_LEVEL_FATAL, msg, ##__VA_ARGS__)
+    #define V_LOG_FATAL(msg, ...) log_output(LOG_LEVEL_FATAL, msg, ##__VA_ARGS__)
 
 
-    #define V_ERROR(msg, ...) log_output(LOG_LEVEL_ERROR, msg, ##__VA_ARGS__)
+    #define V_LOG_ERROR(msg, ...) log_output(LOG_LEVEL_ERROR, msg, ##__VA_ARGS__)
 
 
     #if LOG_WARN_ENBALED == 1
-        #define V_WARN(msg, ...) log_output(LOG_LEVEL_WARNING, msg, ##__VA_ARGS__)
+        #define V_LOG_WARN(msg, ...) log_output(LOG_LEVEL_WARNING, msg, ##__VA_ARGS__)
     #else
-        #define V_WARN(msg, ...)
+        #define V_LOG_WARN(msg, ...)
     #endif
 
 
     #if LOG_INFO_ENABLED == 1 
-        #define V_INFO(msg, ...) log_output(LOG_LEVEL_INFO, msg, ##__VA_ARGS__)
+        #define V_LOG_INFO(msg, ...) log_output(LOG_LEVEL_INFO, msg, ##__VA_ARGS__)
     #else
-        #define V_INFO(msg, ...)
+        #define V_LOG_INFO(msg, ...)
     #endif
 
 
     #if LOG_DEBUG_ENABLED == 1
-        #define V_DEBUG(msg, ...) log_output(LOG_LEVEL_DEBUG, msg, ##__VA_ARGS__)
+        #define V_LOG_DEBUG(msg, ...) log_output(LOG_LEVEL_DEBUG, msg, ##__VA_ARGS__)
     #else
-        #define V_DEBUG(msg, ...)
+        #define V_LOG_DEBUG(msg, ...)
     #endif
 
 
     #if LOG_TRACE_ENABLED == 1
-        #define V_TRACE(msg, ...) log_output(LOG_LEVEL_TRACE, msg, ##__VA_ARGS__)
+        #define V_LOG_TRACE(msg, ...) log_output(LOG_LEVEL_TRACE, msg, ##__VA_ARGS__)
     #else
-        #define V_TRACE(msg, ...)
+        #define V_LOG_TRACE(msg, ...)
     #endif
 
 
