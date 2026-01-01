@@ -7,7 +7,7 @@
         void* internal_state;
     } platform_state_t;
 
-    V_API bool8_t platform_startup(
+    bool8_t platform_startup(
         platform_state_t* platform_state,
         const char* application_name,
         int32_t x_pos,
@@ -16,12 +16,12 @@
         int32_t window_height
     );
     
-    V_API void platform_shutdown(platform_state_t* platform_state);
+    void platform_shutdown(platform_state_t* platform_state);
 
-    V_API bool8_t platform_pump_messages(platform_state_t* platform_state);
+    bool8_t platform_pump_messages(platform_state_t* platform_state);
 
-    void* platform_allocate(uint64_t size, bool8_t aligned);
-    void platform_free(void* ptr, bool8_t aligned);
+    V_API void* platform_allocate(uint64_t size, bool8_t aligned);
+    V_API void platform_free(void* ptr, bool8_t aligned);
     void* platform_zero_memory(void* ptr, uint64_t size);
     void* platform_copy_memory(void* dest, const void* src, uint64_t size);
     void* platform_set_memory(void* dest, int32_t value, uint64_t size);
