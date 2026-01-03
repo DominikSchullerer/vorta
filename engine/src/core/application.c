@@ -4,7 +4,8 @@
 #include "logger.h"
 
 #include "platform/platform.h"
-#include <core/v_memory.h>
+#include "core/v_memory.h"
+#include "core/event.h"
 
 
 typedef struct application_state_t {
@@ -30,7 +31,6 @@ V_API bool8_t application_startup(game_t* game_instance)
     app_state.game_instance = game_instance;
     
     // initialize subsystems here
-    // TODO: Shutdown logging
     initialize_logging();
 
 
@@ -46,6 +46,12 @@ V_API bool8_t application_startup(game_t* game_instance)
     // Initialize application state
     app_state.is_running = TRUE;
     app_state.is_suspended = FALSE;
+
+
+    if (!event_initialize()) {
+        V_LOG_ERROR("Event system failed initialization. Application cannot continue.");
+        return FALSE;
+    }
 
 
     if (!platform_startup(&app_state.platform, 
@@ -98,7 +104,10 @@ V_API bool8_t application_run()
 
     app_state.is_running = FALSE;
 
+    event_shutdown();
+
     platform_shutdown(&app_state.platform);
+    shutdown_logging();
 
     return TRUE;
 }
