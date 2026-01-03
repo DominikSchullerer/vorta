@@ -3,6 +3,7 @@
 
     #include "core/application.h"
     #include "core/logger.h"
+    #include "core/v_memory.h"
     #include "game_types.h"
 
     extern bool8_t create_game(game_t* out_game);
@@ -12,6 +13,7 @@
     //****
     int main(void)
     {
+        initialize_memory();
 
         game_t game_inst = {0};
 
@@ -37,6 +39,8 @@
             V_LOG_FATAL("Application runtime error.");
             return -4;
         }
+
+        shutdown_memory();
 
         return 0;
     }

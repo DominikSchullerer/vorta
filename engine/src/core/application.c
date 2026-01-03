@@ -1,8 +1,10 @@
 #include "application.h"
 #include "game_types.h"
 
-#include "platform/platform.h"
 #include "logger.h"
+
+#include "platform/platform.h"
+#include <core/v_memory.h>
 
 
 typedef struct application_state_t {
@@ -28,6 +30,7 @@ V_API bool8_t application_startup(game_t* game_instance)
     app_state.game_instance = game_instance;
     
     // initialize subsystems here
+    // TODO: Shutdown logging
     initialize_logging();
 
 
@@ -71,6 +74,8 @@ V_API bool8_t application_startup(game_t* game_instance)
 
 V_API bool8_t application_run()
 {
+    V_LOG_INFO(v_get_memory_usage_str());
+
     while(app_state.is_running) {
         if (!platform_pump_messages(&app_state.platform)) {
             app_state.is_running = FALSE;

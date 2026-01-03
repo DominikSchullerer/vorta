@@ -139,14 +139,14 @@
         return malloc(size);
     }
 
-    void platform_free(void* ptr, bool8_t aligned)
+    void platform_free(void* block, bool8_t aligned)
     {
-        free(ptr);
+        free(block);
     }
 
-    void* platform_zero_memory(void* ptr, uint64_t size)
+    void* platform_zero_memory(void* block, uint64_t size)
     {
-        return memset(ptr, 0, size);
+        return memset(block, 0, size);
     }
 
     void* platform_copy_memory(void* dest, const void* src, uint64_t size)

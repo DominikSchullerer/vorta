@@ -1,7 +1,7 @@
 #include "game.h"
 
 #include <entry.h>
-#include <platform/platform.h>
+#include <core/v_memory.h>
 
 // Define the function to create the game instance
 bool8_t create_game(game_t* out_game)
@@ -17,7 +17,7 @@ bool8_t create_game(game_t* out_game)
     out_game->render = game_render;
     out_game->on_resize = game_on_resize;
 
-    out_game->state = platform_allocate(sizeof(game_state_t), FALSE);
+    out_game->state = v_allocate(sizeof(game_state_t), MEMORY_TAG_GAME);
 
     return TRUE;
 }
