@@ -13,7 +13,7 @@
         int32_t window_height;
     } application_config_t;
 
-    V_API bool8_t application_startup(struct game_t* game_instance);
+    V_API bool8_t application_initialize(struct game_t* game_instance);
 
     V_API bool8_t application_run();
 

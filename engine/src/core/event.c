@@ -65,7 +65,7 @@ bool8_t event_register_listener(uint16_t code, void* listener, PFN_on_event on_e
     for (uint64_t i = 0; i < registered_count; i++) {
         registered_event_t reg_event = event_system.registered[code].events[i];
         if (reg_event.listener == listener && reg_event.callback == on_event) {
-            V_LOG_WARN("Could not register event listener. Listener is already registered.")
+            V_LOG_WARN("Could not register event listener. Listener is already registered.");
             return FALSE;
         }
     }

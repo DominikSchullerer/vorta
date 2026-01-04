@@ -6,6 +6,7 @@
 #include "platform/platform.h"
 #include "core/v_memory.h"
 #include "core/event.h"
+#include "core/input.h"
 
 
 typedef struct application_state_t {
@@ -21,7 +22,7 @@ typedef struct application_state_t {
 
 static application_state_t app_state = {0};
 
-V_API bool8_t application_startup(game_t* game_instance)
+V_API bool8_t application_initialize(game_t* game_instance)
 {
     if (app_state.is_initialized) {
         V_LOG_ERROR("Application is already initialized.");
@@ -31,7 +32,8 @@ V_API bool8_t application_startup(game_t* game_instance)
     app_state.game_instance = game_instance;
     
     // initialize subsystems here
-    initialize_logging();
+    logging_initialize();
+    input_initialize();
 
 
     // TODO: Remove this
@@ -54,7 +56,7 @@ V_API bool8_t application_startup(game_t* game_instance)
     }
 
 
-    if (!platform_startup(&app_state.platform, 
+    if (!platform_initialize(&app_state.platform, 
         game_instance->app_config.application_name, 
         game_instance->app_config.window_x_pos, 
         game_instance->app_config.window_y_pos, 
@@ -99,15 +101,21 @@ V_API bool8_t application_run()
                 app_state.is_running = FALSE;
                 break;
             }
+
+            // NOTE: Input update/state copying should always be handled
+            // after any input should be recorded; I.E. before this line.
+            // As a safety, input is the last thing to be updated before
+            // this frame ends.
+            input_update(0.0);
         }
     }
 
     app_state.is_running = FALSE;
 
     event_shutdown();
-
+    input_shutdown();
     platform_shutdown(&app_state.platform);
-    shutdown_logging();
+    logging_shutdown();
 
     return TRUE;
 }

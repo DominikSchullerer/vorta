@@ -28,8 +28,8 @@
         MEMORY_TAG_MAX_TAGS
     } memory_tag_t;
 
-    V_API void initialize_memory();
-    V_API void shutdown_memory();
+    V_API void memory_initialize();
+    V_API void memory_shutdown();
 
     V_API void* v_allocate(uint64_t size, memory_tag_t tag);
     V_API void v_free(void* block, uint64_t size, memory_tag_t tag);

@@ -25,8 +25,8 @@
         LOG_LEVEL_TRACE
     } log_level_t;
 
-    bool8_t initialize_logging();
-    void shutdown_logging();
+    bool8_t logging_initialize();
+    void logging_shutdown();
 
     V_API void log_output(log_level_t level, const char* message, ...);
 

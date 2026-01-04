@@ -13,7 +13,7 @@
     //****
     int main(void)
     {
-        initialize_memory();
+        memory_initialize();
 
         game_t game_inst = {0};
 
@@ -29,7 +29,7 @@
         }
 
         // Initialization
-        if (!application_startup(&game_inst)) {
+        if (!application_initialize(&game_inst)) {
             V_LOG_FATAL("Failed to start application.");
             return -3;
         }
@@ -40,7 +40,7 @@
             return -4;
         }
 
-        shutdown_memory();
+        memory_shutdown();
 
         return 0;
     }

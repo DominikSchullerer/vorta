@@ -21,7 +21,7 @@
     LRESULT CALLBACK win32_process_message(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 
-    bool8_t platform_startup(
+    bool8_t platform_initialize(
         platform_state_t* platform_state,
         const char* application_name,
         int32_t x_pos,

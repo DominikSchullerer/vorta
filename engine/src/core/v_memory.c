@@ -38,12 +38,12 @@ static const char* memory_tag_strings[MEMORY_TAG_MAX_TAGS] = {
 static memory_stats_t memory_stats = {0};
 
 
-void initialize_memory() {
+void memory_initialize() {
     platform_zero_memory(&memory_stats, sizeof(memory_stats));
 }
 
 
-void shutdown_memory() {
+void memory_shutdown() {
     ;
 }
 
