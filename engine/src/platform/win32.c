@@ -2,12 +2,13 @@
 
 #ifdef V_PLATFORM_WINDOWS
 
+    #include "core/logger.h"
+    #include "core/input.h"
+
     #include <windows.h>
     #include <windowsx.h>
 
     #include <stdlib.h>
-
-    #include "core/logger.h"
 
     typedef struct internal_state_t {
         HINSTANCE instance;
@@ -236,39 +237,47 @@
             case WM_KEYUP:
             case WM_SYSKEYUP:
             {
-                // bool8_t pressed = (uMsg == WM_KEYDOWN || uMsg == WM_SYSKEYDOWN)
-                // TODO: Fire an event for key press/release.
+                bool8_t pressed = (uMsg == WM_KEYDOWN || uMsg == WM_SYSKEYDOWN);
+                keys_t key = (uint16_t)wParam;
+                input_process_key(key, pressed);
                 break;
             }
             case WM_MOUSEMOVE:
             {
-                // int32_t mouse_x = GET_X_LPARAM(lParam);
-                // int32_t mouse_y = GET_Y_LPARAM(lParam);
-
-                // TODO: Fire an event for mouse movement.
+                int32_t mouse_x = GET_X_LPARAM(lParam);
+                int32_t mouse_y = GET_Y_LPARAM(lParam);
+                input_process_mouse_move(mouse_x, mouse_y);
                 break;
             }
             case WM_MOUSEWHEEL:
             {
-                // int32_t z_delta = GET_WHEEL_DELTA_WPARAM(wParam);
-                // if (z_delta != 0) {
-                //     // Flatten the input to -1 or 1
-                //     z_delta = (z_delta < 0) ? -1 : 1;
-                // }
-
-                // TODO: Fire an event for mouse wheel.
+                int32_t z_delta = GET_WHEEL_DELTA_WPARAM(wParam);
+                if (z_delta != 0) {
+                    // Flatten the input to -1 or 1
+                    z_delta = (z_delta < 0) ? -1 : 1;
+                }
+                input_process_mouse_wheel(z_delta);
                 break;
             }
             case WM_LBUTTONDOWN:
             case WM_LBUTTONUP:
+            {
+                bool8_t pressed = uMsg == WM_LBUTTONDOWN;
+                input_process_button(BUTTON_LEFT, pressed);
+                break;
+            }
             case WM_RBUTTONDOWN: 
             case WM_RBUTTONUP:
+            {
+                bool8_t pressed = uMsg == WM_RBUTTONDOWN;
+                input_process_button(BUTTON_RIGHT, pressed);
+                break;
+            }
             case WM_MBUTTONDOWN:
             case WM_MBUTTONUP:
             {
-                // bool8_t pressed = (uMsg == WM_LBUTTONDOWN || uMsg == WM_RBUTTONDOWN || uMsg == WM_MBUTTONDOWN);
-
-                // TODO: Fire an event for mouse button press/release.
+                bool8_t pressed = uMsg == WM_MBUTTONDOWN;
+                input_process_button(BUTTON_MIDDLE, pressed);
                 break;
             }
         }

@@ -71,22 +71,22 @@
         // Keyboard key pressed.
         // Context usage:
         // uint16_t key_code = data.data.uint16_data[0];
-        EVENT_CODE_KEYBOARD_KEY_PRESSED = 0x02,
+        EVENT_CODE_KEY_PRESSED = 0x02,
 
         // Keyboard key released.
         // Context usage:
         // uint16_t key_code = data.data.uint16_data[0];
-        EVENT_CODE_KEYBOARD_KEY_RELEASED = 0x03,
+        EVENT_CODE_KEY_RELEASED = 0x03,
 
         // Mouse button pressed.
         // Context usage:
         // uint16_t button_code = data.data.uint16_data[0];
-        EVENT_CODE_MOUSE_BUTTON_PRESSED = 0x04,
+        EVENT_CODE_BUTTON_PRESSED = 0x04,
 
         // Mouse button released.
         // Context usage:
         // uint16_t button_code = data.data.uint16_data[0];
-        EVENT_CODE_MOUSE_BUTTON_RELEASED = 0x05,
+        EVENT_CODE_BUTTON_RELEASED = 0x05,
 
         // Mouse moved.
         // Context usage:

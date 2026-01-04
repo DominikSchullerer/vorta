@@ -55,7 +55,7 @@ void input_process_key(keys_t key, bool8_t pressed) {
         // Fire off an event for immediate processing
         event_context_t context;
         context.data.uint16_data[0] = key;
-        event_fire(pressed ? EVENT_CODE_KEYBOARD_KEY_PRESSED : EVENT_CODE_KEYBOARD_KEY_RELEASED, NULL, context);
+        event_fire(pressed ? EVENT_CODE_KEY_PRESSED : EVENT_CODE_KEY_RELEASED, NULL, context);
     }
 }
 
@@ -67,7 +67,7 @@ void input_process_button(buttons_t button, bool8_t pressed) {
         // Fire off an event for immediate processing
         event_context_t context;
         context.data.uint16_data[0] = button;
-        event_fire(pressed ? EVENT_CODE_MOUSE_BUTTON_PRESSED : EVENT_CODE_MOUSE_BUTTON_RELEASED, NULL, context);
+        event_fire(pressed ? EVENT_CODE_BUTTON_PRESSED : EVENT_CODE_BUTTON_RELEASED, NULL, context);
     }
 }
 

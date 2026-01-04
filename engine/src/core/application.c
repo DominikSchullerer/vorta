@@ -22,6 +22,12 @@ typedef struct application_state_t {
 
 static application_state_t app_state = {0};
 
+
+// Event handlers
+bool8_t application_on_event(uint16_t code, void* sender, void* listener_inst, event_context_t context);
+bool8_t application_on_key(uint16_t code, void* sender, void* listener_inst, event_context_t context);
+
+
 V_API bool8_t application_initialize(game_t* game_instance)
 {
     if (app_state.is_initialized) {
@@ -54,6 +60,11 @@ V_API bool8_t application_initialize(game_t* game_instance)
         V_LOG_ERROR("Event system failed initialization. Application cannot continue.");
         return FALSE;
     }
+
+
+    event_register_listener(EVENT_CODE_APPLICATION_QUIT, NULL, application_on_event);
+    event_register_listener(EVENT_CODE_KEY_PRESSED, NULL, application_on_key);
+    event_register_listener(EVENT_CODE_KEY_RELEASED, NULL, application_on_key);
 
 
     if (!platform_initialize(&app_state.platform, 
@@ -112,6 +123,10 @@ V_API bool8_t application_run()
 
     app_state.is_running = FALSE;
 
+    event_unregister_listener(EVENT_CODE_APPLICATION_QUIT, NULL, application_on_event);
+    event_unregister_listener(EVENT_CODE_KEY_PRESSED, NULL, application_on_key);
+    event_unregister_listener(EVENT_CODE_KEY_RELEASED, NULL, application_on_key);
+
     event_shutdown();
     input_shutdown();
     platform_shutdown(&app_state.platform);
@@ -120,3 +135,61 @@ V_API bool8_t application_run()
     return TRUE;
 }
 
+bool8_t application_on_event(uint16_t code, void* sender, void* listener_inst, event_context_t context)
+{
+    switch (code)
+    {
+        case EVENT_CODE_APPLICATION_QUIT:
+        {
+            V_LOG_INFO("EVENT_CODE_APPLICATION_QUIT received. Shutting down.");
+            app_state.is_running = FALSE;
+            // Block anything else from processing this
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+
+bool8_t application_on_key(uint16_t code, void* sender, void* listener_inst, event_context_t context)
+{
+    uint16_t key_code = context.data.uint16_data[0];
+
+    if (code == EVENT_CODE_KEY_PRESSED) {
+        switch (key_code)
+        {
+            case KEY_ESCAPE:
+            {
+                // NOTE: Technically firing an event to itself, but there may be other listeners.
+                event_context_t data = { 0 };
+                event_fire(EVENT_CODE_APPLICATION_QUIT, NULL, data);
+                // Block anything else from processing this
+                return TRUE;
+            }
+            case KEY_A:
+            {
+                V_LOG_DEBUG("Explicit - A key pressed!");
+            }
+            default:
+            {
+                V_LOG_DEBUG("'%c' key pressed in window.", key_code);
+            }
+        }
+    }
+    else if (code == EVENT_CODE_KEY_RELEASED) {
+        switch (key_code)
+        {
+            case KEY_B:
+            {
+                V_LOG_DEBUG("Explicit - B key released!");
+            }
+            default:
+            {
+                V_LOG_DEBUG("'%c' key released in window.", key_code);
+            }
+        }
+    }
+
+    return FALSE;
+}
