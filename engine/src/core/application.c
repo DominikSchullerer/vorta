@@ -4,9 +4,13 @@
 #include "logger.h"
 
 #include "platform/platform.h"
+
 #include "core/v_memory.h"
 #include "core/event.h"
 #include "core/input.h"
+#include "core/clock.h"
+
+#include "renderer/renderer_frontend.h"
 
 
 typedef struct application_state_t {
@@ -17,6 +21,7 @@ typedef struct application_state_t {
     platform_state_t platform;
     int32_t width;
     int32_t height;
+    clock_t clock;
     float64_t last_time;
 } application_state_t;
 
@@ -77,6 +82,11 @@ V_API bool8_t application_initialize(game_t* game_instance)
         return FALSE;
     }
 
+    if (!renderer_initialize(game_instance->app_config.application_name, &app_state.platform)) {
+        V_LOG_FATAL("Failed to initialize renderer. Aborting application.");
+        return FALSE;
+    }
+
     if (!app_state.game_instance->initialize(game_instance)) {
         V_LOG_FATAL("Game initialization failed.");
         return FALSE;
@@ -93,6 +103,13 @@ V_API bool8_t application_initialize(game_t* game_instance)
 
 V_API bool8_t application_run()
 {
+    clock_start(&app_state.clock);
+    clock_update(&app_state.clock);
+    app_state.last_time = app_state.clock.elapsed;
+    float64_t running_time = 0;
+    uint8_t frame_count = 0;
+    float64_t target_frame_seconds = 1.0 / 60;
+
     V_LOG_INFO(v_get_memory_usage_str());
 
     while(app_state.is_running) {
@@ -101,23 +118,54 @@ V_API bool8_t application_run()
         }
 
         if (!app_state.is_suspended) {
-            if (!app_state.game_instance->update(app_state.game_instance, 0.0)) {
+            // Update clock and get delta time.
+            clock_update(&app_state.clock);
+            float64_t current_time = app_state.clock.elapsed;
+            float64_t delta_time = current_time - app_state.last_time;
+            float64_t frame_start_time = platform_get_absolute_time();
+
+
+            if (!app_state.game_instance->update(app_state.game_instance, (float32_t)delta_time)) {
                 V_LOG_FATAL("Game update failed.");
                 app_state.is_running = FALSE;
                 break;
             }
 
-            if (!app_state.game_instance->render(app_state.game_instance, 0.0)) {
-                V_LOG_FATAL("Game render failed.");
+            if (!app_state.game_instance->render(app_state.game_instance, (float32_t)delta_time)) {
+                V_LOG_FATAL("Game render failed. Shutting down.");
                 app_state.is_running = FALSE;
                 break;
+            }
+
+            render_packet_t packet;
+            packet.delta_time = delta_time;
+            renderer_draw_frame(&packet);
+
+            // Figure out how long the frame took and if below
+            float64_t frame_end_time = platform_get_absolute_time();
+            float64_t frame_elapsed_time = frame_end_time - frame_start_time;
+            running_time += frame_elapsed_time;
+            float64_t remaining_seconds = target_frame_seconds - frame_elapsed_time;
+
+            if (remaining_seconds > 0) {
+                uint64_t remaining_ms = remaining_seconds * 1000;
+
+                // If there is time left, give it back to the OS
+                bool8_t limit_frames = FALSE;
+                if (remaining_ms > 0 && limit_frames) {
+                    platform_sleep(remaining_ms - 1);
+                }
+
+                frame_count++;
             }
 
             // NOTE: Input update/state copying should always be handled
             // after any input should be recorded; I.E. before this line.
             // As a safety, input is the last thing to be updated before
             // this frame ends.
-            input_update(0.0);
+            input_update(delta_time);
+
+            app_state.last_time = current_time;
         }
     }
 
@@ -129,6 +177,7 @@ V_API bool8_t application_run()
 
     event_shutdown();
     input_shutdown();
+    renderer_shutdown();
     platform_shutdown(&app_state.platform);
     logging_shutdown();
 

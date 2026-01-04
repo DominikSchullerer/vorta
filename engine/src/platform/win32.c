@@ -14,10 +14,10 @@
         HINSTANCE instance;
         HWND window_handle;
         bool8_t running;
-        float64_t clock_frequency;
-        LARGE_INTEGER start_time;
     } internal_state_t;
-
+    
+    float64_t clock_frequency;
+    LARGE_INTEGER start_time;
 
     LRESULT CALLBACK win32_process_message(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -98,8 +98,8 @@
         // Clock setup
         LARGE_INTEGER frequency;
         QueryPerformanceFrequency(&frequency);
-        internal_state->clock_frequency = (float64_t)frequency.QuadPart;
-        QueryPerformanceCounter(&internal_state->start_time);
+        clock_frequency = 1.0 / (float64_t)frequency.QuadPart;
+        QueryPerformanceCounter(&start_time);
 
         return TRUE;
     }
@@ -190,12 +190,11 @@
         WriteConsoleA(console_handle, message, (DWORD)length, &number_written, NULL);
     }
 
-    float64_t platform_get_absolute_time(platform_state_t* platform_state)
+    float64_t platform_get_absolute_time()
     {
         LARGE_INTEGER now_time;
         QueryPerformanceCounter(&now_time);
-        internal_state_t* internal_state = (internal_state_t*)platform_state->internal_state;
-        return (float64_t)now_time.QuadPart / internal_state->clock_frequency;
+        return (float64_t)now_time.QuadPart * clock_frequency;
     }
 
     void platform_sleep(uint64_t milliseconds)

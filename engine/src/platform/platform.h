@@ -29,7 +29,7 @@
     void platform_console_write(const char* message, uint8_t log_level);
     void platform_console_write_error(const char* message, uint8_t log_level);
 
-    float64_t platform_get_absolute_time(platform_state_t* platform_state);
+    float64_t platform_get_absolute_time();
 
     void platform_sleep(uint64_t milliseconds);
 
